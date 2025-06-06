@@ -1,12 +1,4 @@
-/// <reference path="../node_modules/levilamina/types/index.d.ts"/>
-
-interface Function {
-  getName: () => string
+declare const CONFIG: {
+  http_address: string
+  http_port: number
 }
-
-declare module '*package.json' {
-  const value: any
-  export default value
-}
-
-declare var console: undefined

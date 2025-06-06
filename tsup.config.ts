@@ -1,50 +1,94 @@
-import { readFileSync, writeFileSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmdirSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { defineConfig } from 'tsup'
-import sh from 'shelljs'
 import { config } from 'dotenv'
 
 config()
 
 const pkg = JSON.parse(readFileSync(resolve(__dirname, 'package.json'), 'utf-8'))
-const PLUGIN_NAME = /* `${pkg.name.charAt(0).toUpperCase()}${pkg.name.slice(1)}` */ 'Sirius'
-const PLUGIN_DIR = resolve(__dirname, process.env.BDS_PATH ?? 'server', `plugins/${PLUGIN_NAME}/`)
-const PLUGIN_STATIC_DIR = resolve(__dirname, 'static')
-const MANIFEST = {
-  entry: `${PLUGIN_NAME}.js`,
-  name: PLUGIN_NAME,
-  version: pkg.version,
-  ...(pkg.description ? { description: pkg.description } : {}),
-  ...(pkg.author ? { author: Array.isArray(pkg.author) ? pkg.author.join(', ') : pkg.author } : {}),
-  ...(pkg.license ? { license: pkg.license } : {}),
-  ...(pkg.levilamina ?? {})
+
+function parseVersion(versionStr: string): [number, number, number] {
+  const parts = versionStr.split('.').map(Number)
+  return [parts[0] || 0, parts[1] || 0, parts[2] || 0]
 }
 
 export default defineConfig(({ define }) => {
   const isRelease = define?.release !== undefined
-  const DIR = isRelease ? resolve('dist') : PLUGIN_DIR
-  if (isRelease) {
-    sh.rm('-rf', 'dist')
-    sh.mkdir('-p', 'dist')
-    sh.cp('-R', `${PLUGIN_STATIC_DIR}/*`, `${DIR}`)
-  } else sh.cp('-R', `${PLUGIN_STATIC_DIR}/*`, `${DIR}*`)
-  writeFileSync(resolve(DIR, 'manifest.json'), JSON.stringify(MANIFEST, null, 2))
+  const bundleName = `${pkg.name}-${pkg.version}-${Date.now()}-${isRelease ? 'prod' : 'dev'}`
+  const DIR = resolve(
+    __dirname,
+    !isRelease && process.env.OUT_DIR ? process.env.OUT_DIR : 'dist',
+    isRelease ? `${pkg.name}-${pkg.version}` : pkg.name
+  )
+
+  if (existsSync(DIR)) rmdirSync(DIR, { recursive: true })
+  mkdirSync(DIR, { recursive: true })
+
+  writeFileSync(
+    resolve(DIR, 'manifest.json'),
+    JSON.stringify(
+      {
+        format_version: 2,
+        header: {
+          name: pkg.name || 'unknown',
+          description: pkg.description || '',
+          uuid: pkg.mcBuild.uuid[0],
+          version: parseVersion(pkg.version || '1.0.0'),
+          min_engine_version: [1, 20, 0],
+          license: pkg.license || '',
+          url: pkg.homepage || ''
+        },
+        modules: [
+          {
+            type: 'script',
+            language: 'javascript',
+            uuid: pkg.mcBuild.uuid[1],
+            version: parseVersion(pkg.version || '1.0.0'),
+            entry: `scripts/${bundleName}/main.js`
+          }
+        ],
+        dependencies: Object.entries(pkg.dependencies || {})
+          .filter(([name]) => name.startsWith('@minecraft/'))
+          .map(([module_name, version]) => ({
+            module_name,
+            version: (version as string).split('.').slice(0, 3).join('.')
+          }))
+      },
+      null,
+      2
+    )
+  )
+  mkdirSync(resolve(DIR, 'scripts'), { recursive: true })
+
+  pkg.mcBuild.transform
+    .map((value) => (typeof value === 'string' ? [value, value] : value))
+    .map(([input, output]) => copyFileSync(resolve(__dirname, input), resolve(DIR, output)))
+
   return {
-    entryPoints: [`./src/${PLUGIN_NAME}.ts`],
-    minify: !!isRelease,
-    outDir: DIR,
+    entryPoints: ['./src/main.ts'],
+    minify: isRelease,
+    outDir: resolve(DIR, `scripts/${bundleName}`),
+    bundle: true,
+    format: ['esm'],
+    tsconfig: 'tsconfig.json',
     banner: {
       js: `
 /**
  * @Package ${pkg.name ?? 'unknown'}
  * @Version ${pkg.version ?? 'unknown'}
  * @Author ${Array.isArray(pkg.author) ? pkg.author.join(', ') : pkg.author ?? ''}
- * @Copyright 2024 Arimura Sena. All rights reserved.
+ * @Copyright 2025 Arimura Sena. All rights reserved.
  * @License ${pkg.license ?? 'GPL-3.0'}
  * @Link ${pkg.homepage ?? ''}
  * @Date ${new Date().toLocaleString()}
  */
+${pkg.mcBuild.header.join('\n')}
 `
+    },
+    outExtension(ctx) {
+      return {
+        js: '.js'
+      }
     }
   }
 })
