@@ -1,3 +1,7 @@
+export function id<T>(x: T): T {
+  return x
+}
+
 export function pipe<t1, t2>(x: t1, f1: (x: t1) => t2): t2
 export function pipe<t1, t2, t3>(x: t1, f1: (x: t1) => t2, f2: (x: t2) => t3): t3
 export function pipe<t1, t2, t3, t4>(x: t1, f1: (x: t1) => t2, f2: (x: t2) => t3, f3: (x: t3) => t4): t4

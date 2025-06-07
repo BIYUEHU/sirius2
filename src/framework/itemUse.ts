@@ -1,12 +1,13 @@
 import { system, world } from '@minecraft/server'
 import { handleCallbackReturn, type Callback } from './common'
 import { pipe } from '../adt/utils'
+import { SiriusDevError } from './error'
 
 const ITEM_USE: Map<string, [Callback, boolean]> = new Map()
 
 export function itemUse(itemId: string, callback: Callback, cancel = false) {
   if (ITEM_USE.has(itemId)) {
-    throw new Error(`Item '${itemId}' already has a callback registered.`)
+    throw new SiriusDevError(`Item '${itemId}' already has a callback registered.`)
   }
   ITEM_USE.set(itemId, [callback, cancel])
 }

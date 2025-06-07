@@ -1,3 +1,5 @@
 export default {
-  a: 1
+  serverUrl: 'http://localhost:3000',
+  serverToken: '',
+  dataId: 'database'
 }

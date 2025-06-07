@@ -8,4 +8,4 @@ dist
 scripts/*.json
 static2
 src-old
-scheme
+schema

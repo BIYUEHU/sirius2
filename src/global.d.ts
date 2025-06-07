@@ -1,4 +1,7 @@
 declare const CONFIG: {
-  http_address: string
-  http_port: number
+  server_url: string
+  server_token: number
+  dataId: string
 }
+
+declare const AdapterDataSome: new () => object

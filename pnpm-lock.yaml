@@ -11,6 +11,9 @@ importers:
       '@minecraft/server':
         specifier: 2.0.0-beta.1.21.84-stable
         version: 2.0.0-beta.1.21.84-stable(@minecraft/vanilla-data@1.21.81)
+      '@minecraft/server-net':
+        specifier: 1.0.0-beta.1.21.84-stable
+        version: 1.0.0-beta.1.21.84-stable(@minecraft/vanilla-data@1.21.81)
       '@minecraft/server-ui':
         specifier: 2.0.0-beta.1.21.84-stable
         version: 2.0.0-beta.1.21.84-stable(@minecraft/vanilla-data@1.21.81)
@@ -279,6 +282,12 @@ packages:
 
   '@minecraft/common@1.2.0':
     resolution: {integrity: sha512-JdmEq4P3Z/FtoBzhLijFgMSVFnFRrUoLwY8DHHrgtFo0mfLTOLTB1RErYjLMsA6b7BGVNxkX/pfFRiH7QZ0XwQ==}
+
+  '@minecraft/server-admin@1.0.0-beta.11940b24':
+    resolution: {integrity: sha512-UZ8YyB8mvF31f22+uM67gJums9d6NDgz9AQ2l4a++EHUP9uen0m3aaBaqM9RyumJpRBJbv/hslAKOyeDT01qew==}
+
+  '@minecraft/server-net@1.0.0-beta.1.21.84-stable':
+    resolution: {integrity: sha512-BWmBro6prqT+K38MHmCFaOdyf9TyYYbcT+/ID5XdDPluo3RE65GpW3wTrmxObQ8/48KgVycn7Pqju7SqpRkgxw==}
 
   '@minecraft/server-ui@2.0.0-beta.1.21.84-stable':
     resolution: {integrity: sha512-s0yZ8aI94XuL9ka5ITt4Z1TKhdE1PzzUTxLoalM7ko9R3Lb/u0/3p7AOBjGcjxuZsjMUJ+Y7GfxdC8joJrysDQ==}
@@ -1360,6 +1369,16 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.4.15
 
   '@minecraft/common@1.2.0': {}
+
+  '@minecraft/server-admin@1.0.0-beta.11940b24': {}
+
+  '@minecraft/server-net@1.0.0-beta.1.21.84-stable(@minecraft/vanilla-data@1.21.81)':
+    dependencies:
+      '@minecraft/common': 1.2.0
+      '@minecraft/server': 2.0.0-beta.1.21.84-stable(@minecraft/vanilla-data@1.21.81)
+      '@minecraft/server-admin': 1.0.0-beta.11940b24
+    transitivePeerDependencies:
+      - '@minecraft/vanilla-data'
 
   '@minecraft/server-ui@2.0.0-beta.1.21.84-stable(@minecraft/vanilla-data@1.21.81)':
     dependencies:

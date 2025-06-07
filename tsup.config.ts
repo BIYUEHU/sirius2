@@ -15,10 +15,13 @@ function parseVersion(versionStr: string): [number, number, number] {
 export default defineConfig(({ define }) => {
   const isRelease = define?.release !== undefined
   const bundleName = `${pkg.name}-${pkg.version}-${Date.now()}-${isRelease ? 'prod' : 'dev'}`
+  const versionType = (isRelease ? define?.is_client_version !== undefined : process.env.IS_CLIENT_VERSION === 'on')
+    ? 'client'
+    : 'server'
   const DIR = resolve(
     __dirname,
     !isRelease && process.env.OUT_DIR ? process.env.OUT_DIR : 'dist',
-    isRelease ? `${pkg.name}-${pkg.version}` : pkg.name
+    isRelease ? `${versionType}/${pkg.name}-${pkg.version}` : pkg.name
   )
 
   if (existsSync(DIR)) rmdirSync(DIR, { recursive: true })
@@ -48,7 +51,9 @@ export default defineConfig(({ define }) => {
           }
         ],
         dependencies: Object.entries(pkg.dependencies || {})
-          .filter(([name]) => name.startsWith('@minecraft/'))
+          .filter(
+            ([name]) => name.startsWith('@minecraft/') && (versionType === 'server' || name !== '@minecraft/server-net')
+          )
           .map(([module_name, version]) => ({
             module_name,
             version: (version as string).split('.').slice(0, 3).join('.')
@@ -64,10 +69,13 @@ export default defineConfig(({ define }) => {
     .map((value) => (typeof value === 'string' ? [value, value] : value))
     .map(([input, output]) => copyFileSync(resolve(__dirname, input), resolve(DIR, output)))
 
+  const outDir = resolve(DIR, `scripts/${bundleName}`)
+
   return {
-    entryPoints: ['./src/main.ts'],
+    entryPoints: ['./src/main.ts', `./src/${versionType}.ts`],
     minify: isRelease,
-    outDir: resolve(DIR, `scripts/${bundleName}`),
+    outDir,
+    name: `${versionType}/${bundleName.split('-').pop()}`,
     bundle: true,
     format: ['esm'],
     tsconfig: 'tsconfig.json',
@@ -89,6 +97,13 @@ ${pkg.mcBuild.header.join('\n')}
       return {
         js: '.js'
       }
+    },
+    async onSuccess() {
+      writeFileSync(
+        resolve(outDir, 'main.js'),
+        `import AdapterDataSome from './${versionType}.js';\n${readFileSync(resolve(outDir, 'main.js'), 'utf-8')}`
+      )
+      console.log(`Build ${isRelease ? 'Release' : 'Dev'} ${versionType} ${pkg.name} v${pkg.version} success!`)
     }
   }
 })

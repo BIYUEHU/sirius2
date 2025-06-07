@@ -63,6 +63,7 @@
   },
   "dependencies": {
     "@minecraft/server": "2.0.0-beta.1.21.84-stable",
+    "@minecraft/server-net": "1.0.0-beta.1.21.84-stable",
     "@minecraft/server-ui": "2.0.0-beta.1.21.84-stable"
   },
   "mcBuild": {

@@ -1,10 +1,5 @@
-// biome-ignore lint:
-export abstract class AdapterData<T extends Record<string, any> = Record<string, any>> {
-  protected constructor(protected readonly defaults?: T) {}
+export abstract class AdapterData {
+  public abstract get(key: string): Promise<unknown>
 
-  public abstract get<K extends keyof T>(key: K): T[K]
-
-  public abstract set<K extends keyof T>(key: K, value: T[K]): void
-
-  public abstract delete<K extends keyof T>(key: K): void
+  public abstract set(key: string, value: unknown): Promise<void>
 }
