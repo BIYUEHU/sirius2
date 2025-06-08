@@ -6,12 +6,13 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     /* Path mapping for module imports */
-    "rootDir": "src",
+    // "rootDir": "src",
+    "baseUrl": ".",
     "lib": [],
     "paths": {
       "package.json": ["."]
     }
   },
-  "include": ["src/**/*", "package.json"],
+  "include": ["core/framework/**/*", "src/**/*", "package.json"],
   "exclude": ["tsup.config.ts", "scripts"]
 }

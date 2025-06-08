@@ -1,3 +1,3 @@
-import { AdapterClient } from './framework/adapter/client'
+import { AdapterClient } from '../core/framework/adapter/client'
 
 export default AdapterClient

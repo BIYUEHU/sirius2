@@ -50,6 +50,7 @@ export default defineConfig(({ define }) => {
             entry: `scripts/${bundleName}/main.js`
           }
         ],
+        capabilities: ['script_eval'],
         dependencies: Object.entries(pkg.dependencies || {})
           .filter(
             ([name]) => name.startsWith('@minecraft/') && (versionType === 'server' || name !== '@minecraft/server-net')
@@ -90,7 +91,6 @@ export default defineConfig(({ define }) => {
  * @Link ${pkg.homepage ?? ''}
  * @Date ${new Date().toLocaleString()}
  */
-${pkg.mcBuild.header.join('\n')}
 `
     },
     outExtension(ctx) {
@@ -100,8 +100,16 @@ ${pkg.mcBuild.header.join('\n')}
     },
     async onSuccess() {
       writeFileSync(
+        resolve(DIR, 'scripts/config.js'),
+        `export default {
+  serverUrl: 'http://localhost:3000',
+  serverToken: '',
+  dataId: 'database'
+}`
+      )
+      writeFileSync(
         resolve(outDir, 'main.js'),
-        `import AdapterDataSome from './${versionType}.js';\n${readFileSync(resolve(outDir, 'main.js'), 'utf-8')}`
+        `\nimport CONFIG from '../config.js';\nimport AdapterDataSome from './${versionType}.js';\n${readFileSync(resolve(outDir, 'main.js'), 'utf-8')}`
       )
       console.log(`Build ${isRelease ? 'Release' : 'Dev'} ${versionType} ${pkg.name} v${pkg.version} success!`)
     }

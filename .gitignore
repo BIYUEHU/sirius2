@@ -8,4 +8,6 @@ dist
 scripts/*.json
 static2
 src-old
-schema
+*.mjs
+core
+target

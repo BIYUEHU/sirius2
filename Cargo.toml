@@ -1,0 +1,12 @@
+[workspace]
+members = ["core"]
+
+[package]
+name = "sirisu"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+salvo = { version = "0.79", features = ["serve-static"] }
+tokio = { version = "1.0", features = ["full"] }
+sirisu_core = { path = "core" }

@@ -71,20 +71,13 @@
       "195b699a-5336-4edf-bd84-ec7a7bef779c",
       "7678bd2b-56a3-490c-988d-0ebb41f3cda4"
     ],
-    "header": [
-      "import CONFIG from '../config.js';"
-    ],
     "transform": [
       [
         "sirius.png",
         "pack_icon.png"
       ],
       "LICENSE",
-      "README.md",
-      [
-        "config.js",
-        "scripts/config.js"
-      ]
+      "README.md"
     ]
   }
 }
