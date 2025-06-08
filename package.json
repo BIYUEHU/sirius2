@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "nodemon --watch",
-    "release": "tsup --define.release true && conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
+    "release": "tsup --define.release true --define.is_client_version true && tsup --define.release true && conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
   },
   "files": [
     "dist",

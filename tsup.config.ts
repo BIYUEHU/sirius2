@@ -12,6 +12,8 @@ function parseVersion(versionStr: string): [number, number, number] {
   return [parts[0] || 0, parts[1] || 0, parts[2] || 0]
 }
 
+// TODO: pack directories and rename to `.mcpack` in release mode
+
 export default defineConfig(({ define }) => {
   const isRelease = define?.release !== undefined
   const bundleName = `${pkg.name}-${pkg.version}-${Date.now()}-${isRelease ? 'prod' : 'dev'}`
@@ -73,7 +75,7 @@ export default defineConfig(({ define }) => {
   const outDir = resolve(DIR, `scripts/${bundleName}`)
 
   return {
-    entryPoints: ['./src/main.ts', `./src/${versionType}.ts`],
+    entryPoints: ['./src-ts/main.ts', `./src-ts/${versionType}.ts`],
     minify: isRelease,
     outDir,
     name: `${versionType}/${bundleName.split('-').pop()}`,
