@@ -1,3 +1,35 @@
-@URL = http://127.0.0.1:3000
+@URL = http://127.0.0.1:612
 
-GET {{URL}}/io/file/.env HTTP/1.1
+### Read file
+
+GET {{URL}}/io/file/sirius/data/data.json HTTP/1.1
+
+### Write file
+
+PUT {{URL}}/io/file/sirius/data/data.json HTTP/1.1
+Content-Type: application/json
+
+{
+  "data": "some data"
+}
+
+### Resolve file
+
+GET {{URL}}/io/resolve/sirius/data/data.json HTTP/1.1
+Content-Type: application/json
+
+{
+  "data": "some data"
+}
+
+### Delete file
+
+DELETE {{URL}}/io/file/sirius/data/data.json HTTP/1.1
+
+### Delete directory
+
+DELETE {{URL}}/io/rmdir/sirius HTTP/1.1
+
+### Exists file
+
+GET {{URL}}/io/exists/sirius/data/data.json HTTP/1.1

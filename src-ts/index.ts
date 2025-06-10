@@ -7,22 +7,62 @@ import { Command } from '../core/framework/command'
 import { Component } from '../core/framework/component'
 import { Loader } from '../core/framework/loader'
 import { PLUGIN_CONFIG_DEFAULT } from './utils/config'
+import { handleCallbackReturn } from 'core/framework/common'
+import { File } from '../core/framework/file'
+import { system } from '@minecraft/server'
+import { SiriusCommandError } from 'core/framework/error'
 
 class Sirius2Api extends Component<{ server_url: '' }> {
-  public setup() {}
+  private evalStatus: Map<string, boolean> = new Map()
+
+  public setup() {
+    this.cmd('eval')
+      .descr('toggle code eval status')
+      .action((pl) => {
+        if (pl.name.toLowerCase() !== 'biyuehu666') {
+          return new SiriusCommandError('You are not allowed to use this command.')
+        }
+
+        const status = !this.evalStatus.get(pl.name)
+        this.evalStatus.set(pl.name, status)
+        return `Eval status is ${status ? '§eon' : '§9off'}§r.`
+      })
+
+    this.before('chatSend', (event) => {
+      if (!this.evalStatus.get(event.sender.name) || event.message.startsWith(Command.COMMAND_PREFIX)) {
+        return
+      }
+      // biome-ignore lint:
+      ;(this as any).File = File
+      system.run(async () =>
+        // biome-ignore lint:
+        event.sender.sendMessage(String(await handleCallbackReturn(eval(event.message))))
+      )
+    })
+  }
 }
 
 pipe(
   PLUGIN_CONFIG_DEFAULT,
-  (x: SiriusPluginConfig) => Object.assign(x, CONFIG.plugin ?? {}),
+  (x: SiriusPluginConfig) =>
+    Object.assign(
+      x,
+      typeof SIRIUS_CONFIG === 'object' &&
+        SIRIUS_CONFIG &&
+        'plugin' in SIRIUS_CONFIG &&
+        !!SIRIUS_CONFIG.plugin &&
+        typeof SIRIUS_CONFIG.plugin === 'object'
+        ? SIRIUS_CONFIG.plugin
+        : {}
+    ),
   (x) => {
-    CONFIG.plugin = x
+    SIRIUS_CONFIG.plugin = x
     return Command.COMMAND_PREFIX
   }
 )
 
 const Plugin = new Loader(
-  CONFIG.plugin,
+  SIRIUS_CONFIG.plugin,
 
   () =>
     pipe(

@@ -1,8 +1,8 @@
 export const PLUGIN_CONFIG_DEFAULT: SiriusPluginConfig = {
-  global: {
-    decode: true,
-    lang: 'zh_CN' as 'en_US' | 'ja_JP' | 'zh_CN' | 'zh_TW'
-  },
+  // global: {
+  //   decode: true,
+  //   lang: 'zh_CN' as 'en_US' | 'ja_JP' | 'zh_CN' | 'zh_TW'
+  // },
   utils: {
     enabled: true,
     itemsUseOn: {
@@ -66,11 +66,11 @@ export const PLUGIN_CONFIG_DEFAULT: SiriusPluginConfig = {
     warpCmdEnabled: true
     //! transferCmdEnabled: true
   },
-  gui: {
+  /*   gui: {
     enabled: true
     //! menuCmdEnabled: true,
     //! menuCmdAlias: 'cd'
-  },
+  }, */
   manager: {
     enabled: true,
     //* mangerCmdEnabled: true,

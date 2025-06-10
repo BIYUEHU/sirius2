@@ -1,12 +1,15 @@
 [workspace]
-members = ["core"]
+members = ["common", "core"]
 
 [package]
-name = "sirisu"
+name = "siriusu"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-salvo = { version = "0.79", features = ["serve-static"] }
+salvo = { version = "0.79" }
 tokio = { version = "1.0", features = ["full"] }
-sirisu_core = { path = "core" }
+siriusu_core = { path = "core" }
+siriusu_common = { path = "common" }
+roga = "1.0.0"
+dotenvy = "0.15.7"

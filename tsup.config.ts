@@ -17,14 +17,16 @@ function parseVersion(versionStr: string): [number, number, number] {
 export default defineConfig(({ define }) => {
   const isRelease = define?.release !== undefined
   const bundleName = `${pkg.name}-${pkg.version}-${Date.now()}-${isRelease ? 'prod' : 'dev'}`
-  const versionType = (isRelease ? define?.is_client_version !== undefined : process.env.IS_CLIENT_VERSION === 'on')
-    ? 'client'
-    : 'server'
-  const DIR = resolve(
-    __dirname,
-    !isRelease && process.env.OUT_DIR ? process.env.OUT_DIR : 'dist',
-    isRelease ? `${versionType}/${pkg.name}-${pkg.version}` : pkg.name
-  )
+  const isClientVersion = isRelease ? define?.is_client_version !== undefined : process.env.IS_CLIENT_VERSION === 'on'
+  const versionType = isClientVersion ? 'client' : 'server'
+  const DIR =
+    !isRelease && !isClientVersion && process.env.BDS_DIR
+      ? resolve(__dirname, process.env.BDS_DIR, 'behavior_packs', pkg.name)
+      : resolve(
+          __dirname,
+          !isRelease && process.env.OUT_DIR ? process.env.OUT_DIR : 'dist',
+          isRelease ? `${versionType}/${pkg.name}-${pkg.version}` : pkg.name
+        )
 
   if (existsSync(DIR)) rmdirSync(DIR, { recursive: true })
   mkdirSync(DIR, { recursive: true })
@@ -54,9 +56,7 @@ export default defineConfig(({ define }) => {
         ],
         capabilities: ['script_eval'],
         dependencies: Object.entries(pkg.dependencies || {})
-          .filter(
-            ([name]) => name.startsWith('@minecraft/') && (versionType === 'server' || name !== '@minecraft/server-net')
-          )
+          .filter(([name]) => name.startsWith('@minecraft/') && (!isClientVersion || name !== '@minecraft/server-net'))
           .map(([module_name, version]) => ({
             module_name,
             version: (version as string).split('.').slice(0, 3).join('.')
@@ -93,6 +93,7 @@ export default defineConfig(({ define }) => {
  * @Link ${pkg.homepage ?? ''}
  * @Date ${new Date().toLocaleString()}
  */
+${isClientVersion ? '' : `\nimport SIRIUS_CONFIG from '../config.js';`}
 `
     },
     outExtension(ctx) {
@@ -102,17 +103,12 @@ export default defineConfig(({ define }) => {
     },
     async onSuccess() {
       writeFileSync(
-        resolve(DIR, 'scripts/config.js'),
-        `export default {
-  serverUrl: 'http://localhost:3000',
-  serverToken: '',
-  dataId: 'database'
-}`
-      )
-      writeFileSync(
         resolve(outDir, 'main.js'),
-        `\nimport CONFIG from '../config.js';\nimport AdapterDataSome from './${versionType}.js';\n${readFileSync(resolve(outDir, 'main.js'), 'utf-8')}`
+        `\nimport AdapterDataSome from './${versionType}.js';\n${readFileSync(resolve(outDir, 'main.js'), 'utf-8')}`
       )
+      if (!isClientVersion) {
+      }
+      /* TODO: JS Encrypted */
       console.log(`Build ${isRelease ? 'Release' : 'Dev'} ${versionType} ${pkg.name} v${pkg.version} success!`)
     }
   }

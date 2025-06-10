@@ -5,9 +5,10 @@
   "license": "BAN-ZHINESE-USING",
   "author": "Arimura Sena <biyuehuya@gmail.com>",
   "scripts": {
-    "build": "tsup",
+    "build": "pnpm generate:types && tsup",
     "dev": "nodemon --watch",
-    "release": "tsup --define.release true --define.is_client_version true && tsup --define.release true && conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
+    "release": "pnpm generate:types && tsup --define.release true --define.is_client_version true && tsup --define.release true && conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
+    "generate:types": "cd core && cargo test"
   },
   "files": [
     "dist",
@@ -57,6 +58,7 @@
     "ext": "ts",
     "ignore": [
       "tsup.config.ts",
+      "output.ts",
       "tests",
       "*.test.ts"
     ]

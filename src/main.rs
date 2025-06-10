@@ -1,28 +1,41 @@
-use salvo::prelude::*;
-use sirisu::prelude::*;
+use roga::*;
+use siriusu::utils::{bootstrap_server, get_config, load_env_vars, spawn_bds};
+use siriusu_core::{service::logger::get_logger, utils::get_routes};
 
 #[tokio::main]
 async fn main() {
-    let router = Router::with_path("io")
-        .push(
-            Router::with_path("file/{path}")
-                .get(read_file)
-                .put(write_file)
-                .delete(delete_file),
-        )
-        .push(Router::with_path("exists/{path}").get(exists))
-        .push(Router::with_path("isFile/{path}").get(is_file))
-        .push(Router::with_path("isDir/{path}").get(is_directory))
-        .push(Router::with_path("mkdir/{path}").post(create_directory))
-        .push(Router::with_path("list/{path}").get(list_directory))
-        .push(Router::with_path("rmdir/{path}").delete(delete_directory))
-        .push(Router::with_path("copy").post(copy_file))
-        .push(Router::with_path("resolve/{path}").get(resolve_path));
+    load_env_vars();
 
-    println!("Server running at http://localhost:3000");
-    println!("{:?}", router);
+    let program_config = match get_config() {
+        Ok(config) => config,
+        Err(e) => {
+            eprintln!("Error: {}", e);
+            return;
+        }
+    };
 
-    Server::new(TcpListener::new("127.0.0.1:3000").bind().await)
-        .serve(router)
-        .await;
+    let logger = get_logger();
+    l_debug!(logger, "Running in development mode");
+
+    if !program_config.bds_directory.is_empty() {
+        spawn_bds(&program_config.bds_directory);
+    }
+
+    if program_config.server_token.is_empty() {
+        l_warn!(logger, "Authentication token is not set");
+    }
+    if !program_config.safe_path {
+        l_warn!(logger, "Safe path is disabled, all files can be accessed")
+    }
+
+    let address = format!(
+        "{}:{}",
+        program_config.server_host, program_config.server_port
+    );
+    l_info!(logger, "Server running at http://{}", address);
+
+    let routers = get_routes();
+    l_debug!(logger, "\n{:?}", routers);
+
+    bootstrap_server(address, routers).await;
 }

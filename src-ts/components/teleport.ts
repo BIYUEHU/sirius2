@@ -1,4 +1,4 @@
-import { system, world } from '@minecraft/server'
+import { system } from '@minecraft/server'
 import { Command } from '../../core/framework/command'
 import { fromDim, getRealTopmostBlockY, showVector3, toDim, toVector3, toVectorXZ } from '../../core/framework/utils'
 import { Data } from '../../core/framework/data'

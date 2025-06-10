@@ -11,3 +11,4 @@ src-old
 *.mjs
 core
 target
+server

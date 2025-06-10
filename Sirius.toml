@@ -1,0 +1,65 @@
+serverHost = "127.0.0.1"
+serverPort = 612
+serverToken = ""
+logLevel = "info"
+bdsDirectory = "./"
+startBds = true
+safePath = true
+dataId = "default"
+
+[plugin.utils]
+sidebarList = [
+  "",
+  "§aNam: §f%name%",
+  "§cHlt: §f%health%/%maxHealth%",
+  "§eLvl: §f%level% (XP: %xp%)",
+  "§dDim: §f%dim%",
+  "§9Spd: §f%speed%",
+  "",
+  "§bTime: §f%h%:%min%:%s%",
+  "§7Online: §f%onlineCount%",
+  "",
+  "§6§oWelcome to the server!",
+]
+sidebarRefreshInterval = 20
+headbarRefreshInterval = 20
+itemsUseOn = { "minecraft:clock" = "menu" }
+enabled = true
+joinWelcomeEnabled = true
+joinWelcomeMsg = "§6§lWelcome to the server, §a%name%!§r"
+chatFormatEnabled = true
+chatFormat = "§l§e%y%-%m%-%d%§r §g§l%h%:%min%:%s%§r §r§l[§a%dim% §r§l| §l§c%health%❤ §r§l| §6%gamemode%§r§l] §r%name%: %msg%"
+sidebarEnabled = true
+sidebarTitle = "§6§l=== Server Info ==="
+sidebarMaxLines = 15
+headbarEnabled = true
+headbarTemplate = "§c%health%/%maxHealth%❤"
+actionbarEnabled = true
+actionbarTemplate = "§eCPS: §f%cps% §2TPS: §f%tps% §bStatus: §f%status%"
+actionbarRefreshInterval = 2
+
+[plugin.helper]
+enabled = true
+suicideCmdEnabled = true
+backCmdEnabled = true
+clockCmdEnabled = true
+hereCmdEnabled = true
+loreCmdEnabled = true
+
+[plugin.teleport]
+enabled = true
+tpaCmdEnabled = true
+tpaExpireTime = 20
+tprCmdEnabled = true
+tprMaxDistance = 10000
+tprMinDistance = 1000
+tprEffectionSeconds = 35
+homeCmdEnabled = true
+homeMaxCount = 15
+warpCmdEnabled = true
+
+[plugin.manager]
+enabled = true
+vanishCmdEnabled = true
+runasCmdEnabled = true
+infoCmdEnabled = true
