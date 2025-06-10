@@ -1,7 +1,7 @@
 serverHost = "127.0.0.1"
 serverPort = 612
 serverToken = ""
-logLevel = "info"
+logLevel = "record"
 bdsDirectory = "./"
 startBds = true
 safePath = true
