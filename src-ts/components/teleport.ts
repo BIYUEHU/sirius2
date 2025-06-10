@@ -117,8 +117,8 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
       .descr('home command: ls, go, add, del')
       .action(async (pl, [action, name]) => {
         const homesDB = await Data.get('homes')
-        if (!homesDB[pl.id]) homesDB[pl.id] = {}
-        const userHomes = homesDB[pl.id]
+        if (!homesDB[pl.name]) homesDB[pl.name] = {}
+        const userHomes = homesDB[pl.name]
 
         switch (action) {
           case 'ls': {
