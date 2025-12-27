@@ -5,7 +5,7 @@
 
 ![wakatime](https://wakatime.com/badge/user/018dc603-712a-4205-a226-d4c9ccd0d02b/project/603af708-3a70-4749-b71b-a20b6f5b8bfd.svg) ![License](https://img.shields.io/badge/license-BCU-fe0000)
 
-> Base on Minecraft Bedorck Addon Scripting API. It's a verfion of refactoring the [LeviLamina Plugin](https://github.com/biyuehu/sirius)
+> Base on Minecraft Bedorck Addon Scripting API. It's a version of refactoring the [LeviLamina Plugin](https://github.com/biyuehu/sirius)
 
 ## Features
 
