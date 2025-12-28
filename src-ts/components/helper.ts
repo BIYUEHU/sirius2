@@ -25,7 +25,9 @@ export class Helper extends Component<SiriusPluginConfig['helper']> {
     this.after('entityDie', (event) => {
       if (event.deadEntity.typeId !== 'minecraft:player') return
       LAST_DIED_LOCATION.set(event.deadEntity.id, [event.deadEntity.location, event.deadEntity.dimension])
-      // event.player.sendMessage(`Input ${Command.COMMAND_PREFIX}back to go back to last died location.`)
+      // TODO: add message to player
+      console.log('Died entity id', event.deadEntity.id)
+      // .sendMessage(`Input ${Command.COMMAND_PREFIX}back to go back to last died location.`)
     })
 
     this.cmd('back')
@@ -36,22 +38,25 @@ export class Helper extends Component<SiriusPluginConfig['helper']> {
           LAST_DIED_LOCATION.get(pl.id)
         )
       )
+      .setup()
   }
 
   private clock() {
     this.cmd('clock')
       .descr('give yourself a clock')
       .action((pl) => pl.runCommand(`give "${pl.name}" clock`))
+      .setup()
   }
 
   private here() {
     this.cmd('here')
       .descr('boardcast your location to all players')
       .action((pl) => betterTell(`§a${pl.name} is at ${showVector3(pl.location)}`, TargetEntity.ALL))
+      .setup()
   }
 
   private lore() {
-    this.cmd('lore <content>')
+    this.cmd('lore <content:String>')
       .descr('set lore of selected item, split by "|"')
       .action((pl, [content]) => {
         const inventory = pl.getComponent('minecraft:inventory')
@@ -60,5 +65,6 @@ export class Helper extends Component<SiriusPluginConfig['helper']> {
         item.setLore(content?.split('|') ?? [])
         inventory?.container.setItem(pl.selectedSlotIndex, item)
       })
+      .setup()
   }
 }

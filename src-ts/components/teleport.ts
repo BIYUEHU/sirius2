@@ -1,5 +1,4 @@
 import { system } from '@minecraft/server'
-import { Command } from '../../core/framework/command'
 import { Component } from '../../core/framework/component'
 import { Data } from '../../core/framework/data'
 import { SiriusCommandError } from '../../core/framework/error'
@@ -49,10 +48,11 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
         }
         tryLand()
       })
+      .setup()
   }
 
   private tpa() {
-    this.cmd('tpa <action> [player:Player]')
+    this.cmd('tpa <action:String> [player:Player]')
       .descr('Send or respond to teleport request')
       .action((sender, [action, target]) => {
         const senderId = sender.id
@@ -118,10 +118,11 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
 
         return new SiriusCommandError('Unknown action. Use to, here, ac, de, cancel.')
       })
+      .setup()
   }
 
   private home() {
-    this.cmd('home <action> [name:string]')
+    this.cmd('home <action:String> [name:String]')
       .descr('home command: ls, go, add, del')
       .action(async (pl, [action, name]) => {
         const homesDB = await Data.get('homes')
@@ -135,14 +136,14 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
             return `Your homes:\n${list.join('\n')}`
           }
           case 'go': {
-            if (!name) return new SiriusCommandError(`Usage: ${Command.COMMAND_PREFIX}home go <name>`)
+            if (!name) return new SiriusCommandError('Usage: /home go <name>')
             if (!userHomes[name]) return new SiriusCommandError(`No home named "${name}".`)
             const pos = userHomes[name]
             pl.teleport({ x: pos.x, y: pos.y, z: pos.z }, { dimension: fromDim(pos.dimension) })
             return `Teleported to home "${name}".`
           }
           case 'add': {
-            if (!name) return new SiriusCommandError(`Usage: ${Command.COMMAND_PREFIX}home add <name>`)
+            if (!name) return new SiriusCommandError('Usage: /home add <name>')
             if (userHomes[name]) return new SiriusCommandError(`Home "${name}" already exists.`)
             if (Object.keys(userHomes).length >= this.config.homeMaxCount) {
               return new SiriusCommandError(`Maximum home count reached (${this.config.homeMaxCount}).`)
@@ -157,7 +158,7 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
             return `Home "${name}" set at ${showVector3(pl.location)}.`
           }
           case 'del': {
-            if (!name) return new SiriusCommandError(`Usage: ${Command.COMMAND_PREFIX}home del <name>`)
+            if (!name) return new SiriusCommandError('Usage: /home del <name>')
             if (!userHomes[name]) return new SiriusCommandError(`No home named "${name}".`)
             delete userHomes[name]
             await Data.set('homes', homesDB)
@@ -167,10 +168,11 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
             return new SiriusCommandError('Unknown action. Use ls, go, add, del.')
         }
       })
+      .setup()
   }
 
   private warp() {
-    this.cmd('warp <action> [name:string]')
+    this.cmd('warp <action:String> [name:String]')
       .descr('warp command: ls, go, add, del')
       .action(async (pl, [action, name]) => {
         const warpsDB = await Data.get('warps')
@@ -182,7 +184,7 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
             return `Warps:\n${list.join('\n')}`
           }
           case 'go': {
-            if (!name) return new SiriusCommandError(`Usage: ${Command.COMMAND_PREFIX}warp go <name>`)
+            if (!name) return new SiriusCommandError('Usage: /warp go <name>')
             const pos = warpsDB[name]
             if (!pos) return new SiriusCommandError(`Warp "${name}" does not exist.`)
             pl.teleport({ x: pos.x, y: pos.y, z: pos.z }, { dimension: fromDim(pos.dimension) })
@@ -190,7 +192,7 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
           }
           case 'add': {
             if (!isOpPlayer(pl)) return new SiriusCommandError('Permission denied.')
-            if (!name) return new SiriusCommandError(`Usage: ${Command.COMMAND_PREFIX}warp add <name>`)
+            if (!name) return new SiriusCommandError('Usage: /warp add <name>')
             if (warpsDB[name]) return new SiriusCommandError(`Warp "${name}" already exists.`)
             warpsDB[name] = {
               x: pl.location.x,
@@ -203,7 +205,7 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
           }
           case 'del': {
             if (!isOpPlayer(pl)) return new SiriusCommandError('Permission denied.')
-            if (!name) return new SiriusCommandError(`Usage: ${Command.COMMAND_PREFIX}warp del <name>`)
+            if (!name) return new SiriusCommandError('Usage: /warp del <name>')
             if (!warpsDB[name]) return new SiriusCommandError(`Warp "${name}" not found.`)
             delete warpsDB[name]
             await Data.set('warps', warpsDB)
@@ -213,5 +215,6 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
             return new SiriusCommandError('Unknown action. Use ls, go, add, del.')
         }
       })
+      .setup()
   }
 }

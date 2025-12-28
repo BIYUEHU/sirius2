@@ -1,5 +1,4 @@
 import { system } from '@minecraft/server'
-import { Command } from '../../core/framework/command'
 import { Component } from '../../core/framework/component'
 import { ActionbarManager, HeadbarManager, SidebarManager } from '../../core/framework/display'
 import { betterTell, TargetEntity, t2, t2PlayerObjProvider } from '../../core/framework/utils'
@@ -34,7 +33,6 @@ export class Utils extends Component<SiriusPluginConfig['utils']> {
 
   private chatFormat() {
     this.before('chatSend', (event) => {
-      if (event.message.startsWith(Command.COMMAND_PREFIX)) return
       event.cancel = true
       system.run(() =>
         betterTell(
