@@ -1,7 +1,7 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmdirSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { defineConfig } from 'tsup'
 import { config } from 'dotenv'
+import { defineConfig } from 'tsup'
 
 config()
 
@@ -41,7 +41,7 @@ export default defineConfig(({ define }) => {
           description: pkg.description || '',
           uuid: pkg.mcBuild.uuid[0],
           version: parseVersion(pkg.version || '1.0.0'),
-          min_engine_version: [1, 20, 0],
+          min_engine_version: [1, 21, 100],
           license: pkg.license || '',
           url: pkg.homepage || ''
         },
@@ -87,7 +87,7 @@ export default defineConfig(({ define }) => {
 /**
  * @Package ${pkg.name ?? 'unknown'}
  * @Version ${pkg.version ?? 'unknown'}
- * @Author ${Array.isArray(pkg.author) ? pkg.author.join(', ') : pkg.author ?? ''}
+ * @Author ${Array.isArray(pkg.author) ? pkg.author.join(', ') : (pkg.author ?? '')}
  * @Copyright 2025 Arimura Sena. All rights reserved.
  * @License ${pkg.license ?? 'GPL-3.0'}
  * @Link ${pkg.homepage ?? ''}
@@ -96,7 +96,7 @@ export default defineConfig(({ define }) => {
 ${isClientVersion ? '' : `\nimport SIRIUS_CONFIG from '../config.js';`}
 `
     },
-    outExtension(ctx) {
+    outExtension() {
       return {
         js: '.js'
       }

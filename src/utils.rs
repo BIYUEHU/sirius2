@@ -16,9 +16,19 @@ use std::{
 };
 
 pub fn load_env_vars() -> () {
-    if is_dev_mode()
-        && fs::exists(".env").expect("Cannot load environments variables from .env file.")
-    {
+    if is_dev_mode() {
+        if !fs::exists(".env").expect("Cannot load environments variables from .env file.") {
+            println!(
+                "Warning: Running in development mode but .env file not found at {}",
+                std::env::current_dir()
+                    .expect("Failed to get current directory")
+                    .as_path()
+                    .join(".env")
+                    .to_str()
+                    .unwrap_or("")
+            );
+            return;
+        }
         match dotenv() {
             Err(e) => {
                 eprintln!("Failed to load environment variables from .env file: {}", e);
@@ -35,7 +45,7 @@ pub fn get_config() -> Result<SiriusConfig, String> {
         .and_then(|config: SiriusConfig| {
             let mut config = config;
             if is_dev_mode() {
-                config.bds_directory = std::env::var("BDS_DIR").unwrap_or(config.bds_directory)
+                config.bds_directory = std::env::var("BDS_DIR").unwrap_or(config.bds_directory);
             }
 
             let log_level = config.log_level.clone();

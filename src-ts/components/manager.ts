@@ -1,7 +1,7 @@
 import { CommandAccess } from '../../core/framework/command'
+import { Component } from '../../core/framework/component'
 import { SiriusCommandError } from '../../core/framework/error'
 import { showVector2, showVector3 } from '../../core/framework/utils'
-import { Component } from '../../core/framework/component'
 
 export class Manager extends Component<SiriusPluginConfig['manager']> {
   public setup() {
@@ -13,14 +13,14 @@ export class Manager extends Component<SiriusPluginConfig['manager']> {
   private vanish() {
     this.cmd('vanish')
       .descr('vanish yourself')
-      .access(CommandAccess.OP)
+      .permission(CommandAccess.OP)
       .action((pl) => pl.addEffect('invisibility', 2 * 10 ** 7, { showParticles: false, amplifier: 225 }))
   }
 
   private runas() {
     this.cmd('runas <player:Player> <command>')
       .descr('run a command as another player')
-      .access(CommandAccess.OP)
+      .permission(CommandAccess.OP)
       .action((_, [pl, command]) => {
         try {
           pl.runCommand(command)
@@ -34,7 +34,7 @@ export class Manager extends Component<SiriusPluginConfig['manager']> {
   private info() {
     this.cmd('info [player:Player]')
       .descr('get player info')
-      .access(CommandAccess.OP)
+      .permission(CommandAccess.OP)
       .action((self, [target]) => {
         const pl = target ?? self
         return [

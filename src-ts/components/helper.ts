@@ -1,6 +1,6 @@
 import type { Dimension, Vector3 } from '@minecraft/server'
-import { TargetEntity, betterTell, showVector3 } from '../../core/framework/utils'
 import { Component } from '../../core/framework/component'
+import { betterTell, showVector3, TargetEntity } from '../../core/framework/utils'
 
 export class Helper extends Component<SiriusPluginConfig['helper']> {
   public setup() {

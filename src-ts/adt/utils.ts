@@ -66,7 +66,7 @@ export function pipe<t1, t2, t3, t4, t5, t6, t7, t8, t9, t10>(
   f8: (x: t8) => t9,
   f9: (x: t9) => t10
 ): t10
-// biome-ignore lint:
+// biome-ignore lint: *
 export function pipe(x: any, ...funcs: any[]): any {
   return funcs.reduce((v, f) => f(v), x)
 }

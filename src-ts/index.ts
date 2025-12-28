@@ -1,16 +1,16 @@
+import { system } from '@minecraft/server'
+import { handleCallbackReturn } from 'core/framework/common'
+import { SiriusCommandError } from 'core/framework/error'
+import { Command } from '../core/framework/command'
+import { Component } from '../core/framework/component'
+import { File } from '../core/framework/file'
+import { Loader } from '../core/framework/loader'
 import { pipe } from './adt/utils'
 import { Helper } from './components/helper'
 import { Manager } from './components/manager'
 import { Teleport } from './components/teleport'
 import { Utils } from './components/utils'
-import { Command } from '../core/framework/command'
-import { Component } from '../core/framework/component'
-import { Loader } from '../core/framework/loader'
 import { PLUGIN_CONFIG_DEFAULT } from './utils/config'
-import { handleCallbackReturn } from 'core/framework/common'
-import { File } from '../core/framework/file'
-import { system } from '@minecraft/server'
-import { SiriusCommandError } from 'core/framework/error'
 
 class Sirius2Api extends Component<{ server_url: '' }> {
   private evalStatus: Map<string, boolean> = new Map()
@@ -32,10 +32,10 @@ class Sirius2Api extends Component<{ server_url: '' }> {
       if (!this.evalStatus.get(event.sender.name) || event.message.startsWith(Command.COMMAND_PREFIX)) {
         return
       }
-      // biome-ignore lint:
+      // biome-ignore lint: *
       ;(this as any).File = File
       system.run(async () =>
-        // biome-ignore lint:
+        // biome-ignore lint: *
         event.sender.sendMessage(String(await handleCallbackReturn(eval(event.message))))
       )
     })

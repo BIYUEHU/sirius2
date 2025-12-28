@@ -1,9 +1,17 @@
 import { system } from '@minecraft/server'
 import { Command } from '../../core/framework/command'
-import { fromDim, getRealTopmostBlockY, showVector3, toDim, toVector3, toVectorXZ } from '../../core/framework/utils'
+import { Component } from '../../core/framework/component'
 import { Data } from '../../core/framework/data'
 import { SiriusCommandError } from '../../core/framework/error'
-import { Component } from '../../core/framework/component'
+import {
+  fromDim,
+  getRealTopmostBlockY,
+  isOpPlayer,
+  showVector3,
+  toDim,
+  toVector3,
+  toVectorXZ
+} from '../../core/framework/utils'
 
 export class Teleport extends Component<SiriusPluginConfig['teleport']> {
   private TPA_RUNNING: Map<string, [string, () => void]> = new Map()
@@ -181,7 +189,7 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
             return `Warped to "${name}".`
           }
           case 'add': {
-            if (!pl.isOp()) return new SiriusCommandError('Permission denied.')
+            if (!isOpPlayer(pl)) return new SiriusCommandError('Permission denied.')
             if (!name) return new SiriusCommandError(`Usage: ${Command.COMMAND_PREFIX}warp add <name>`)
             if (warpsDB[name]) return new SiriusCommandError(`Warp "${name}" already exists.`)
             warpsDB[name] = {
@@ -194,7 +202,7 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
             return `Warp "${name}" set at ${showVector3(pl.location)}.`
           }
           case 'del': {
-            if (!pl.isOp()) return new SiriusCommandError('Permission denied.')
+            if (!isOpPlayer(pl)) return new SiriusCommandError('Permission denied.')
             if (!name) return new SiriusCommandError(`Usage: ${Command.COMMAND_PREFIX}warp del <name>`)
             if (!warpsDB[name]) return new SiriusCommandError(`Warp "${name}" not found.`)
             delete warpsDB[name]

@@ -1,8 +1,8 @@
 import { system } from '@minecraft/server'
 import { Command } from '../../core/framework/command'
-import { TargetEntity, betterTell, t2, t2PlayerObjProvider } from '../../core/framework/utils'
-import { ActionbarManager, HeadbarManager, SidebarManager } from '../../core/framework/display'
 import { Component } from '../../core/framework/component'
+import { ActionbarManager, HeadbarManager, SidebarManager } from '../../core/framework/display'
+import { betterTell, TargetEntity, t2, t2PlayerObjProvider } from '../../core/framework/utils'
 
 export class Utils extends Component<SiriusPluginConfig['utils']> {
   private sidebarManager?: SidebarManager

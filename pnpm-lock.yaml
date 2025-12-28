@@ -9,14 +9,14 @@ importers:
   .:
     dependencies:
       '@minecraft/server':
-        specifier: 2.0.0-beta.1.21.84-stable
-        version: 2.0.0-beta.1.21.84-stable(@minecraft/vanilla-data@1.21.81)
+        specifier: 2.5.0-beta.1.21.131-stable
+        version: 2.5.0-beta.1.21.131-stable(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.21.81)
       '@minecraft/server-net':
         specifier: 1.0.0-beta.1.21.84-stable
         version: 1.0.0-beta.1.21.84-stable(@minecraft/vanilla-data@1.21.81)
       '@minecraft/server-ui':
-        specifier: 2.0.0-beta.1.21.84-stable
-        version: 2.0.0-beta.1.21.84-stable(@minecraft/vanilla-data@1.21.81)
+        specifier: 2.1.0-beta.1.21.131-stable
+        version: 2.1.0-beta.1.21.131-stable(@minecraft/common@1.2.0)(@minecraft/server@2.5.0-beta.1.21.131-stable(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.21.81))
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.8.3
@@ -33,9 +33,6 @@ importers:
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
-      levilamina:
-        specifier: ^2.14.1
-        version: 2.14.1
       nodemon:
         specifier: ^3.1.3
         version: 3.1.4
@@ -44,10 +41,13 @@ importers:
         version: 0.8.5
       tsup:
         specifier: ^8.1.0
-        version: 8.1.0
+        version: 8.1.0(typescript@5.9.3)
       tsx:
         specifier: ^4.16.2
         version: 4.16.2
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
 packages:
 
@@ -289,12 +289,22 @@ packages:
   '@minecraft/server-net@1.0.0-beta.1.21.84-stable':
     resolution: {integrity: sha512-BWmBro6prqT+K38MHmCFaOdyf9TyYYbcT+/ID5XdDPluo3RE65GpW3wTrmxObQ8/48KgVycn7Pqju7SqpRkgxw==}
 
-  '@minecraft/server-ui@2.0.0-beta.1.21.84-stable':
-    resolution: {integrity: sha512-s0yZ8aI94XuL9ka5ITt4Z1TKhdE1PzzUTxLoalM7ko9R3Lb/u0/3p7AOBjGcjxuZsjMUJ+Y7GfxdC8joJrysDQ==}
-
-  '@minecraft/server@2.0.0-beta.1.21.84-stable':
-    resolution: {integrity: sha512-v4EHs+SDyimXhI9eDgr/sUDFI54+d1j9WUoUXvvZ3JTEQhn9DLd1KywIQtJzzyOw2eaNO3nSV+oy13g8SkVqoA==}
+  '@minecraft/server-ui@2.1.0-beta.1.21.131-stable':
+    resolution: {integrity: sha512-c8R6xFORK/+UMvvHdrPp+sta1sfPUdpkFploKmSVxTiYa+gtj/VTpww7rSOUFI57gON4J/FKfOGi9qbgSH6xqw==}
     peerDependencies:
+      '@minecraft/common': ^1.0.0
+      '@minecraft/server': ^2.0.0 || ^2.5.0-beta.1.21.131-stable
+
+  '@minecraft/server@2.4.0':
+    resolution: {integrity: sha512-xd9dOWQ4RhPQBCt2aui9tp/GCnjvXpi6ZHVxaUr0SPDHfh/GkMRWnyf2Ud6D3pEThp/0giOEtHY1sx2HN9Qd+A==}
+    peerDependencies:
+      '@minecraft/common': ^1.2.0
+      '@minecraft/vanilla-data': '>=1.20.70'
+
+  '@minecraft/server@2.5.0-beta.1.21.131-stable':
+    resolution: {integrity: sha512-MoFoCIXDZiVbfaGTl+EwE+DCMEPxfQ8e0RDPazQ4kN63/uuliXFlNnP8JwTMo7mEw3AhzFxYrw9sVq+OqGDgVQ==}
+    peerDependencies:
+      '@minecraft/common': ^1.2.0
       '@minecraft/vanilla-data': '>=1.20.70'
 
   '@minecraft/vanilla-data@1.21.81':
@@ -801,9 +811,6 @@ packages:
     resolution: {integrity: sha512-POQXvpdL69+CluYsillJ7SUhKvytYjW9vG/GKpnf+xP8UWgYEM/RaMzHHofbALDiKbbP1W8UEYmgGl39WkPZsg==}
     engines: {'0': node >= 0.2.0}
 
-  levilamina@2.14.1:
-    resolution: {integrity: sha512-PDRrEFvkrvFBoJUwVHPVIe9SkyI/8hbza9G8s3OcAAfIimC30yw4LJoOmqA6cOAy2kMzso1zCWlpAApzEJhmyA==}
-
   lilconfig@3.1.2:
     resolution: {integrity: sha512-eop+wDAvpItUys0FWkHIKeC9ybYrTGbU41U5K7+bttZZeohvnY7M9dZ5kB21GNWiFT2q1OoPTvncPCgSOVO5ow==}
     engines: {node: '>=14'}
@@ -1172,6 +1179,11 @@ packages:
     resolution: {integrity: sha512-R6wDsVsoS9xYOpy8vgeBlqpdOyzJ12HNfQhC/aAKWM3YoCV9TtunJzh/QpkMgeDhkoynDcw5f1y+qF9yc/HHyg==}
     engines: {node: '>=16'}
 
+  typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   uglify-js@3.18.0:
     resolution: {integrity: sha512-SyVVbcNBCk0dzr9XL/R/ySrmYf0s372K6/hFklzgcp2lBFyXtw4I7BOdDjlLhE1aVqaI/SHWXWmYdlZxuyF38A==}
     engines: {node: '>=0.8.0'}
@@ -1375,19 +1387,22 @@ snapshots:
   '@minecraft/server-net@1.0.0-beta.1.21.84-stable(@minecraft/vanilla-data@1.21.81)':
     dependencies:
       '@minecraft/common': 1.2.0
-      '@minecraft/server': 2.0.0-beta.1.21.84-stable(@minecraft/vanilla-data@1.21.81)
+      '@minecraft/server': 2.4.0(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.21.81)
       '@minecraft/server-admin': 1.0.0-beta.11940b24
     transitivePeerDependencies:
       - '@minecraft/vanilla-data'
 
-  '@minecraft/server-ui@2.0.0-beta.1.21.84-stable(@minecraft/vanilla-data@1.21.81)':
+  '@minecraft/server-ui@2.1.0-beta.1.21.131-stable(@minecraft/common@1.2.0)(@minecraft/server@2.5.0-beta.1.21.131-stable(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.21.81))':
     dependencies:
       '@minecraft/common': 1.2.0
-      '@minecraft/server': 2.0.0-beta.1.21.84-stable(@minecraft/vanilla-data@1.21.81)
-    transitivePeerDependencies:
-      - '@minecraft/vanilla-data'
+      '@minecraft/server': 2.5.0-beta.1.21.131-stable(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.21.81)
 
-  '@minecraft/server@2.0.0-beta.1.21.84-stable(@minecraft/vanilla-data@1.21.81)':
+  '@minecraft/server@2.4.0(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.21.81)':
+    dependencies:
+      '@minecraft/common': 1.2.0
+      '@minecraft/vanilla-data': 1.21.81
+
+  '@minecraft/server@2.5.0-beta.1.21.131-stable(@minecraft/common@1.2.0)(@minecraft/vanilla-data@1.21.81)':
     dependencies:
       '@minecraft/common': 1.2.0
       '@minecraft/vanilla-data': 1.21.81
@@ -1885,8 +1900,6 @@ snapshots:
 
   jsonparse@1.3.1: {}
 
-  levilamina@2.14.1: {}
-
   lilconfig@3.1.2: {}
 
   lines-and-columns@1.2.4: {}
@@ -2199,7 +2212,7 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  tsup@8.1.0:
+  tsup@8.1.0(typescript@5.9.3):
     dependencies:
       bundle-require: 4.2.1(esbuild@0.21.5)
       cac: 6.7.14
@@ -2215,6 +2228,8 @@ snapshots:
       source-map: 0.8.0-beta.0
       sucrase: 3.35.0
       tree-kill: 1.2.2
+    optionalDependencies:
+      typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
       - ts-node
@@ -2229,6 +2244,8 @@ snapshots:
   type-fest@3.13.1: {}
 
   type-fest@4.20.1: {}
+
+  typescript@5.9.3: {}
 
   uglify-js@3.18.0:
     optional: true
