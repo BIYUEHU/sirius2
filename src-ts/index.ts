@@ -6,6 +6,7 @@ import { File } from '../core/framework/file'
 import { Loader } from '../core/framework/loader'
 import { pipe } from './adt/utils'
 import { Helper } from './components/helper'
+import { Land } from './components/land'
 import { Manager } from './components/manager'
 import { Teleport } from './components/teleport'
 import { Utils } from './components/utils'
@@ -17,7 +18,7 @@ class Sirius2Api extends Component<{ server_url: '' }> {
   public setup() {
     this.cmd('eval')
       .descr('toggle code eval status')
-      .action((pl) => {
+      .setup((pl) => {
         if (pl.name.toLowerCase() !== 'biyuehu666') {
           return new SiriusCommandError('You are not allowed to use this command.')
         }
@@ -28,8 +29,7 @@ class Sirius2Api extends Component<{ server_url: '' }> {
       })
 
     this.before('chatSend', (event) => {
-      if (!this.evalStatus.get(event.sender.name))         return
-      // biome-ignore lint: *
+      if (!this.evalStatus.get(event.sender.name)) return // biome-ignore lint: *
       ;(this as any).File = File
       system.run(async () =>
         // biome-ignore lint: *
@@ -57,17 +57,13 @@ pipe(
   }
 )
 
-
-
-
-
 const Plugin = new Loader(SIRIUS_CONFIG.plugin)
 
 Plugin.use('sirius2', Sirius2Api)
 Plugin.use('helper', Helper)
 Plugin.use('teleport', Teleport)
 // Plugin.use('money', Money)
-// Plugin.use('land', Land)
+Plugin.use('land', Land)
 Plugin.use('manager', Manager)
 Plugin.use('utils', Utils)
 

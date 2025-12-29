@@ -83,14 +83,14 @@ export const PLUGIN_CONFIG_DEFAULT: SiriusPluginConfig = {
     //! stopCmdEnabled: true,
     infoCmdEnabled: true
     //* safeCmdEnabled: true
-  }
-  /* land: {
+  },
+  land: {
     enabled: true,
     maxBlockCount: 900000,
     buyPrice: 0.5,
     destPrice: 0.4
-  },
-  money: {
+  }
+  /* money: {
     enabled: true,
     // default: 0,
     scoreboardName: 'money',

@@ -25,7 +25,7 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
   private tpr() {
     this.cmd('tpr')
       .descr('teleport to random location')
-      .action((pl) => {
+      .setup((pl) => {
         const init = this.config.tprMaxDistance - this.config.tprMinDistance + 1 + this.config.tprMinDistance
         const [x, z] = new Array(2).fill(0).map(() => Math.floor(Math.random() * init))
         pl.teleport(toVector3(x, pl.dimension.getTopmostBlock(toVectorXZ(x, z))?.y ?? 320, z))
@@ -48,13 +48,12 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
         }
         tryLand()
       })
-      .setup()
   }
 
   private tpa() {
     this.cmd('tpa <action:String> [player:Player]')
       .descr('Send or respond to teleport request')
-      .action((sender, [action, target]) => {
+      .setup((sender, [action, target]) => {
         const senderId = sender.id
         const senderName = sender.name
 
@@ -107,7 +106,7 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
 
         if (action === 'cancel') {
           let found = false
-          for (const [k, [target]] of this.TPA_RUNNING) {
+          for (const [k, _] of this.TPA_RUNNING) {
             if (k !== senderId) continue
             this.TPA_RUNNING.delete(k)
             found = true
@@ -118,13 +117,12 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
 
         return new SiriusCommandError('Unknown action. Use to, here, ac, de, cancel.')
       })
-      .setup()
   }
 
   private home() {
     this.cmd('home <action:String> [name:String]')
       .descr('home command: ls, go, add, del')
-      .action(async (pl, [action, name]) => {
+      .setup(async (pl, [action, name]) => {
         const homesDB = await Data.get('homes')
         if (!homesDB[pl.name]) homesDB[pl.name] = {}
         const userHomes = homesDB[pl.name]
@@ -168,13 +166,12 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
             return new SiriusCommandError('Unknown action. Use ls, go, add, del.')
         }
       })
-      .setup()
   }
 
   private warp() {
     this.cmd('warp <action:String> [name:String]')
       .descr('warp command: ls, go, add, del')
-      .action(async (pl, [action, name]) => {
+      .setup(async (pl, [action, name]) => {
         const warpsDB = await Data.get('warps')
 
         switch (action) {
@@ -215,6 +212,5 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
             return new SiriusCommandError('Unknown action. Use ls, go, add, del.')
         }
       })
-      .setup()
   }
 }

@@ -58,6 +58,12 @@ homeCmdEnabled = true
 homeMaxCount = 15
 warpCmdEnabled = true
 
+[plugin.land]
+enabled = true
+maxBlockCount = 900000
+buyPrice = 0.5
+destPrice = 0.4
+
 [plugin.manager]
 enabled = true
 vanishCmdEnabled = true

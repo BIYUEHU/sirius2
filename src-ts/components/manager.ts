@@ -14,33 +14,33 @@ export class Manager extends Component<SiriusPluginConfig['manager']> {
     this.cmd('vanish')
       .descr('vanish yourself')
       .permission(CommandPermissionLevel.Admin)
-      .action((pl) => pl.addEffect('invisibility', 2 * 10 ** 7, { showParticles: false, amplifier: 225 })).setup()
+      .setup((pl) => pl.addEffect('invisibility', 2 * 10 ** 7, { showParticles: false, amplifier: 225 }))
   }
 
   private runas() {
     this.cmd('runas <player:Player> <command:String>')
       .descr('run a command as another player')
       .permission(CommandPermissionLevel.Admin)
-      .action((_, [pl, command]) => {
+      .setup((_, [pl, command]) => {
         try {
           pl.runCommand(command)
           return `Command "${command}" run as ${pl.name}.`
         } catch (e) {
           return new SiriusCommandError(String(e))
         }
-      }).setup()
+      })
   }
 
   private info() {
     this.cmd('info [player:Player]')
       .descr('get player info')
       .permission(CommandPermissionLevel.Admin)
-      .action((self, [target]) => {
+      .setup((self, [target]) => {
         const pl = target ?? self
         return [
           'Info',
           `Name: ${pl.name}`,
-          `Id: ${pl.id}`,
+          `Id: ${pl.name}`,
           `Gamemode: ${pl.getGameMode()}`,
           `Tags: ${pl.getTags().join(', ') || 'None'}`,
           `Rotation: ${showVector2(pl.getRotation())}`,
@@ -54,6 +54,6 @@ export class Manager extends Component<SiriusPluginConfig['manager']> {
           `Max render distance: ${pl.clientSystemInfo.maxRenderDistance}`,
           `Graphics mode: ${pl.graphicsMode}`
         ].join('\n')
-      }).setup()
+      })
   }
 }
