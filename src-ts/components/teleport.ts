@@ -51,8 +51,9 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
   }
 
   private tpa() {
-    this.cmd('tpa <action:String> [player:Player]')
-      .descr('Send or respond to teleport request')
+    this.enum('tpaAction', ['to', 'here', 'ac', 'de', 'cancel'])
+    this.cmd('tpa <action:Enum-tpaAction> [player:Player]')
+      .descr('Send or respond to teleport request.')
       .setup((sender, [action, target]) => {
         const senderId = sender.id
         const senderName = sender.name
@@ -120,8 +121,9 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
   }
 
   private home() {
-    this.cmd('home <action:String> [name:String]')
-      .descr('home command: ls, go, add, del')
+    this.enum('homeAction', ['ls', 'go', 'add', 'del'])
+    this.cmd('home <action:Enum-homeAction> [name:String]')
+      .descr('Teleport to a home or manage homes.')
       .setup(async (pl, [action, name]) => {
         const homesDB = await Data.get('homes')
         if (!homesDB[pl.name]) homesDB[pl.name] = {}
@@ -169,8 +171,9 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
   }
 
   private warp() {
-    this.cmd('warp <action:String> [name:String]')
-      .descr('warp command: ls, go, add, del')
+    this.enum('warpAction', ['ls', 'go', 'add', 'del'])
+    this.cmd('warp <action:Enum-warpAction> [name:String]')
+      .descr('Teleport to a warp or manage warps.')
       .setup(async (pl, [action, name]) => {
         const warpsDB = await Data.get('warps')
 
