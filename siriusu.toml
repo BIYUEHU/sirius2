@@ -10,11 +10,11 @@ dataId = "default"
 [plugin.utils]
 sidebarList = [
   "",
-  "§aNam: §f%name%",
-  "§cHlt: §f%health%/%maxHealth%",
-  "§eLvl: §f%level% (XP: %xp%)",
-  "§dDim: §f%dim%",
-  "§9Spd: §f%speed%",
+  # "§aNam: §f%name%",
+  # "§cHlt: §f%health%/%maxHealth%",
+  # "§eLvl: §f%level% (XP: %xp%)",
+  # "§dDim: §f%dim%",
+  # "§9Spd: §f%speed%",
   "",
   "§bTime: §f%h%:%min%:%s%",
   "§7Online: §f%onlineCount%",
@@ -38,11 +38,18 @@ actionbarEnabled = true
 actionbarTemplate = "§eCPS: §f%cps% §2TPS: §f%tps% §bStatus: §f%status%"
 actionbarRefreshInterval = 2
 
+[plugin.gui]
+enabled = true
+menuCmdEnabled = true
+menuCmdAlias = "cd"
+
 [plugin.helper]
 enabled = true
+noticeCmdEnabled = true
 suicideCmdEnabled = true
 backCmdEnabled = true
 clockCmdEnabled = true
+msguiCmdEnabled = true
 hereCmdEnabled = true
 loreCmdEnabled = true
 

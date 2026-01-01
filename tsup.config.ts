@@ -1,6 +1,7 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmdirSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { config } from 'dotenv'
+import sh from 'shelljs'
 import { defineConfig } from 'tsup'
 
 config()
@@ -13,6 +14,8 @@ function parseVersion(versionStr: string): [number, number, number] {
 }
 
 // TODO: pack directories and rename to `.mcpack` in release mode
+
+// TODO: locales files by js file
 
 export default defineConfig(({ define }) => {
   const isRelease = define?.release !== undefined
@@ -30,6 +33,19 @@ export default defineConfig(({ define }) => {
 
   if (existsSync(DIR)) rmdirSync(DIR, { recursive: true })
   mkdirSync(DIR, { recursive: true })
+
+  if (!isClientVersion) {
+    if (isRelease) {
+      const staticDir = resolve(DIR, '../', `${pkg.name}-${pkg.version}-static`)
+      mkdirSync(staticDir, { recursive: true })
+      sh.cp('-R', 'static/*', staticDir)
+    } else if (existsSync(resolve(__dirname, 'sirius'))) {
+      const staticDir = resolve(__dirname, 'sirius/static')
+      rmdirSync(staticDir, { recursive: true })
+      mkdirSync(staticDir, { recursive: true })
+      sh.cp('-R', 'static/*', 'sirius/static')
+    }
+  }
 
   writeFileSync(
     resolve(DIR, 'manifest.json'),
@@ -66,7 +82,9 @@ export default defineConfig(({ define }) => {
       2
     )
   )
-  mkdirSync(resolve(DIR, 'scripts'), { recursive: true })
+  mkdirSync(resolve(DIR, 'scripts'), {
+    recursive: true
+  })
 
   pkg.mcBuild.transform
     .map((value) => (typeof value === 'string' ? [value, value] : value))
@@ -94,6 +112,8 @@ export default defineConfig(({ define }) => {
  * @Date ${new Date().toLocaleString()}
  */
 ${isClientVersion ? '' : `\nimport SIRIUS_CONFIG from '../config.js';`}
+\nconst IS_SERVER = ${String(!isClientVersion)};
+\nconst IS_DEBUG = ${String(!isRelease)};
 `
     },
     outExtension() {

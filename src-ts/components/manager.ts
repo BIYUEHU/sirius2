@@ -12,14 +12,15 @@ export class Manager extends Component<SiriusPluginConfig['manager']> {
 
   private vanish() {
     this.cmd('vanish')
-      .descr('vanish yourself')
+      .descr('Vanish yourself.')
       .permission(CommandPermissionLevel.GameDirectors)
       .setup((pl) => pl.addEffect('invisibility', 2 * 10 ** 7, { showParticles: false, amplifier: 225 }))
   }
 
   private runas() {
+    // TODO
     this.cmd('runas <player:Player> <command:String>')
-      .descr('run a command as another player')
+      .descr('Run a command as another player.')
       .permission(CommandPermissionLevel.GameDirectors)
       .setup((_, [pl, command]) => {
         try {
@@ -33,7 +34,7 @@ export class Manager extends Component<SiriusPluginConfig['manager']> {
 
   private info() {
     this.cmd('info [player:Player]')
-      .descr('get player info')
+      .descr('Get player info.')
       .permission(CommandPermissionLevel.GameDirectors)
       .setup((self, [target]) => {
         const pl = target ?? self

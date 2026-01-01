@@ -1,4 +1,5 @@
-import { system } from '@minecraft/server'
+import { system, world } from '@minecraft/server'
+import { sendAdvancedModalForm, sendForm, sendSimpleForm } from 'core/framework/gui'
 import { Component } from '../../core/framework/component'
 import { Data } from '../../core/framework/data'
 import { SiriusCommandError } from '../../core/framework/error'
@@ -24,7 +25,7 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
 
   private tpr() {
     this.cmd('tpr')
-      .descr('teleport to random location')
+      .descr('Teleport to random location.')
       .setup((pl) => {
         const init = this.config.tprMaxDistance - this.config.tprMinDistance + 1 + this.config.tprMinDistance
         const [x, z] = new Array(2).fill(0).map(() => Math.floor(Math.random() * init))
@@ -51,29 +52,32 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
   }
 
   private tpa() {
-    this.enum('tpaAction', ['to', 'here', 'ac', 'de', 'cancel'])
+    this.before('playerLeave', (ev) => {
+      for (const [sender, [target]] of this.TPA_RUNNING) {
+        if ([sender, target].includes(ev.player.name)) this.TPA_RUNNING.delete(sender)
+      }
+    })
+
+    this.enum('tpaAction', ['to', 'here', 'ac', 'de', 'cancel', 'gui'])
     this.cmd('tpa <action:Enum-tpaAction> [player:Player]')
       .descr('Send or respond to teleport request.')
       .setup((sender, [action, target]) => {
-        const senderId = sender.id
-        const senderName = sender.name
-
         if (action === 'to' || action === 'here') {
           if (!target) return new SiriusCommandError('Missing target player.')
-
-          const targetId = target.id
-          if (this.TPA_RUNNING.has(targetId)) {
+          console.log(JSON.stringify(target))
+          if (this.TPA_RUNNING.has(target.name)) {
             return new SiriusCommandError(`${target.name} already has a pending request.`)
           }
 
           const timer = system.runTimeout(() => {
-            this.TPA_RUNNING.delete(targetId)
+            if (!this.TPA_RUNNING.has(target.name)) return
+            this.TPA_RUNNING.delete(target.name)
             sender.sendMessage(`Teleport request to ${target.name} timed out.`)
-            target.sendMessage(`Teleport request from ${senderName} timed out.`)
+            target.sendMessage(`Teleport request from ${sender.name} timed out.`)
           }, 20 * this.config.tpaExpireTime)
 
-          this.TPA_RUNNING.set(targetId, [
-            senderId,
+          this.TPA_RUNNING.set(target.name, [
+            sender.name,
             () => {
               if (action === 'to') sender.teleport(target.location, { dimension: target.dimension })
               else target.teleport(sender.location, { dimension: sender.dimension })
@@ -83,23 +87,30 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
 
           sender.sendMessage(`Request sent to ${target.name}.`)
           target.sendMessage(
-            `${senderName} wants to teleport ${action === 'to' ? 'to you' : 'you to them'}. Input "/tpa ac" to accept or "/tpa de" to deny.`
+            `${sender.name} wants to teleport ${action === 'to' ? 'to you' : 'you to them'}. Input "/tpa ac" to accept or "/tpa de" to deny.`
+          )
+          sendAdvancedModalForm(
+            target,
+            'Teleport Request',
+            `${sender.name} wants to teleport ${action === 'to' ? 'to you' : 'you to them'}.`,
+            (pl) => pl.runCommand('tpa ac'),
+            (pl) => pl.runCommand('tpa de')
           )
           return
         }
 
         if (action === 'ac') {
-          const req = this.TPA_RUNNING.get(senderId)
+          const req = this.TPA_RUNNING.get(sender.name)
           if (!req) return new SiriusCommandError('No pending request found.')
           const [_, callback] = req
           callback()
-          this.TPA_RUNNING.delete(senderId)
+          this.TPA_RUNNING.delete(sender.name)
           return 'Teleport request accepted.'
         }
 
         if (action === 'de') {
-          if (this.TPA_RUNNING.has(senderId)) {
-            this.TPA_RUNNING.delete(senderId)
+          if (this.TPA_RUNNING.has(sender.name)) {
+            this.TPA_RUNNING.delete(sender.name)
             return 'Teleport request denied.'
           }
           return new SiriusCommandError('No pending request to deny.')
@@ -108,7 +119,7 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
         if (action === 'cancel') {
           let found = false
           for (const [k, _] of this.TPA_RUNNING) {
-            if (k !== senderId) continue
+            if (k !== sender.name) continue
             this.TPA_RUNNING.delete(k)
             found = true
           }
@@ -116,12 +127,28 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
           return 'Teleport request cancelled.'
         }
 
-        return new SiriusCommandError('Unknown action. Use to, here, ac, de, cancel.')
+        if (action === 'gui') {
+          const players = world.getPlayers().map((p) => p.name)
+          sendForm(sender, {
+            type: 'custom',
+            title: 'Teleport Request',
+            elements: [
+              { type: 'dropdown', title: 'Mode', items: ['To', 'Here'] },
+              { type: 'dropdown', title: 'Target', items: players }
+            ],
+            action: (pl, mode, index) => {
+              pl.runCommand(`tpa ${mode === 0 ? 'to' : 'here'} ${players[index]}`)
+            }
+          })
+          return
+        }
+
+        return new SiriusCommandError('Unknown action.')
       })
   }
 
   private home() {
-    this.enum('homeAction', ['ls', 'go', 'add', 'del'])
+    this.enum('homeAction', ['ls', 'go', 'add', 'del', 'gui'])
     this.cmd('home <action:Enum-homeAction> [name:String]')
       .descr('Teleport to a home or manage homes.')
       .setup(async (pl, [action, name]) => {
@@ -164,14 +191,26 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
             await Data.set('homes', homesDB)
             return `Home "${name}" deleted.`
           }
+          case 'gui': {
+            sendSimpleForm(
+              pl,
+              'Homes',
+              '',
+              Object.keys(userHomes).map((text) => ({
+                text,
+                action: () => pl.runCommand(`home go ${text}`)
+              }))
+            )
+            return
+          }
           default:
-            return new SiriusCommandError('Unknown action. Use ls, go, add, del.')
+            return new SiriusCommandError('Unknown action.')
         }
       })
   }
 
   private warp() {
-    this.enum('warpAction', ['ls', 'go', 'add', 'del'])
+    this.enum('warpAction', ['ls', 'go', 'add', 'del', 'gui'])
     this.cmd('warp <action:Enum-warpAction> [name:String]')
       .descr('Teleport to a warp or manage warps.')
       .setup(async (pl, [action, name]) => {
@@ -211,8 +250,20 @@ export class Teleport extends Component<SiriusPluginConfig['teleport']> {
             await Data.set('warps', warpsDB)
             return `Warp "${name}" deleted.`
           }
+          case 'gui': {
+            sendSimpleForm(
+              pl,
+              'Warps',
+              '',
+              Object.keys(warpsDB).map((text) => ({
+                text,
+                action: () => pl.runCommand(`warp go ${text}`)
+              }))
+            )
+            return
+          }
           default:
-            return new SiriusCommandError('Unknown action. Use ls, go, add, del.')
+            return new SiriusCommandError('Unknown action')
         }
       })
   }

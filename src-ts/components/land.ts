@@ -5,9 +5,10 @@ import { Maybe } from 'src-ts/adt/maybe'
 import { Component } from '../../core/framework/component'
 import { Data, Database } from '../../core/framework/data'
 import { SiriusCommandError } from '../../core/framework/error'
-import { sendForm } from '../../core/framework/gui'
+import { sendAdvancedModalForm, sendForm } from '../../core/framework/gui'
 import {
   calculateBlockCount,
+  getPlayerByName,
   hasIntersection,
   isOpPlayer,
   isPositionInArea,
@@ -112,9 +113,9 @@ export class Land extends Component<SiriusPluginConfig['land']> {
     system.runInterval(() => {
       for (const [name, info] of this.creatingLandProcess.entries()) {
         if (!info.a || !info.b) continue
-        const pl = world.getAllPlayers().find((pl) => pl.name === name)
-        if (!pl) continue
-        new ParticleDrawer(pl, 'minecraft:villager_happy').drawCuboid(info.a, info.b)
+        getPlayerByName(name).map((pl) =>
+          new ParticleDrawer(pl, 'minecraft:villager_happy').drawCuboid(info.a!, info.b!)
+        )
       }
 
       for (const pl of world.getPlayers()) {
@@ -144,7 +145,7 @@ export class Land extends Component<SiriusPluginConfig['land']> {
   }
 
   private landCommand() {
-    this.enum('landAction', ['ls', 'buy', 'giveup', 'gui', 'tp', 'new', 'set', 'del', 'welcome'])
+    this.enum('landAction', ['ls', 'buy', 'giveup', 'gui', 'tp', 'new', 'set', 'del', 'welcome', 'add', 'remove'])
     this.cmd('land <action:enum-landAction> [name:String] [msg:String]')
       .descr('Create a land or manage lands.')
       .setup(async (pl, [action, name, msg]) => {
@@ -206,13 +207,30 @@ export class Land extends Component<SiriusPluginConfig['land']> {
                     { text: '传送', action: () => pl.runCommand(`land tp ${name}`) },
                     {
                       text: '添加白名单',
-                      action: async () => {
-                        // TODO: land gui more options
-                      }
+                      action: () =>
+                        sendForm(pl, {
+                          type: 'custom',
+                          title: `管理 ${name} - 添加白名单`,
+                          elements: [{ type: 'input', title: '玩家名' }],
+                          action: (pl, target) => pl.runCommand(`land add "${name}" "${target}"`)
+                        })
+                    },
+                    {
+                      text: '删除白名单',
+                      action: async () =>
+                        sendForm(pl, {
+                          type: 'custom',
+                          title: `管理 ${name} - 删除白名单`,
+                          elements: [{ type: 'input', title: '玩家名' }],
+                          action: (pl, target) => pl.runCommand(`land remove "${name}" "${target}"`)
+                        })
                     },
                     {
                       text: '删除',
-                      action: () => {}
+                      action: () =>
+                        sendAdvancedModalForm(pl, `管理 ${name} - 删除`, `确认删除 ${name}?`, (pl) =>
+                          pl.runCommand(`land del "${name}"`)
+                        )
                     }
                   ]
                 })
@@ -260,6 +278,8 @@ export class Land extends Component<SiriusPluginConfig['land']> {
           case 'del': {
             if (!name) return new SiriusCommandError('Usage: /land del <name>')
             if (!(name in lands)) return new SiriusCommandError('Land not found.')
+            // TODO: money system
+            // const price = calculateBlockCount([lands[name].start, lands[name].end]) * this.config.buyPrice
             delete lands[name]
             await Data.set('lands', allLands)
             return `Land ${name} deleted.`
@@ -271,6 +291,24 @@ export class Land extends Component<SiriusPluginConfig['land']> {
             await Data.set('lands', allLands)
             return `Welcome message set for land ${name}.`
           }
+          case 'add': {
+            if (!name || !msg) return new SiriusCommandError('Usage: /land add <name> <player>')
+            if (!(name in lands)) return new SiriusCommandError('Land not found.')
+            if (lands[name].allowlist.includes(msg)) return new SiriusCommandError('Player already in allowlist.')
+            lands[name].allowlist.push(msg)
+            await Data.set('lands', allLands)
+            return `Player ${msg} added to allowlist of land ${name}.`
+          }
+          case 'remove': {
+            if (!name || !msg) return new SiriusCommandError('Usage: /land remove <name> <player>')
+            if (!(name in lands)) return new SiriusCommandError('Land not found.')
+            if (lands[name].allowlist.indexOf(msg) === -1) return new SiriusCommandError('Player not in allowlist.')
+            lands[name].allowlist = lands[name].allowlist.filter((p) => p !== msg)
+            await Data.set('lands', allLands)
+            return `Player ${msg} removed from allowlist of land ${name}.`
+          }
+          default:
+            return new SiriusCommandError('Unknown action.')
         }
       })
   }

@@ -24,3 +24,9 @@ This is still a work in progress.
 ## License
 
 Under the [BCU](https://github.com/ICEAGENB/ban-zhinese-using) license.
+
+## TODO
+
+- [ ] gui schema
+- [ ] 玩家个性化侧边栏
+- [ ] leave msg

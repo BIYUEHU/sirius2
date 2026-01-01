@@ -5,6 +5,7 @@ import { Component } from '../core/framework/component'
 import { File } from '../core/framework/file'
 import { Loader } from '../core/framework/loader'
 import { pipe } from './adt/utils'
+import { Gui } from './components/gui'
 import { Helper } from './components/helper'
 import { Land } from './components/land'
 import { Manager } from './components/manager'
@@ -60,12 +61,13 @@ pipe(
 const Plugin = new Loader(SIRIUS_CONFIG.plugin)
 
 Plugin.use('sirius2', Sirius2Api)
+Plugin.use('utils', Utils)
+Plugin.use('gui', Gui)
 Plugin.use('helper', Helper)
 Plugin.use('teleport', Teleport)
 // Plugin.use('money', Money)
 Plugin.use('land', Land)
 Plugin.use('manager', Manager)
-Plugin.use('utils', Utils)
 
 const bootstrap = Plugin.load.bind(Plugin)
 

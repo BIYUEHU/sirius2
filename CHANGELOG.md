@@ -1,11 +1,14 @@
-# [2.0.0](https://github.com/biyuehu/sirius/compare/v1.0.1...v2.0.0) (2025-06-10)
+# [2.0.0](https://github.com/biyuehu/sirius/compare/v1.0.1...v2.0.0) (2025-12-31)
 
 
 ### Features
 
+* action and land ([0a3c0e8](https://github.com/biyuehu/sirius/commit/0a3c0e8a1a698b17614b82ad6f43a386cf926241))
 * components and trackers ([d2567a9](https://github.com/biyuehu/sirius/commit/d2567a9deaedcbae6ba88fdc5e2a131510e63ff1))
 * home, warp, tpa, chat, sidebar, nametags, lore ([1664576](https://github.com/biyuehu/sirius/commit/1664576296d50ed292b7cea4cf6decade9e4cfd5))
+* land plugin ([cc46372](https://github.com/biyuehu/sirius/commit/cc46372119acf3ae96ce9c14fd09e7d3be31505a))
 * server api ([8ef2780](https://github.com/biyuehu/sirius/commit/8ef2780cc711e263a2aabddcffc69364b395eb22))
+* support mcbe v1.12.131 ([d095ba3](https://github.com/biyuehu/sirius/commit/d095ba3a46cf6f10822eb186014e77ce069196b4))
 
 
 

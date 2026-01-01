@@ -41,14 +41,19 @@ export const PLUGIN_CONFIG_DEFAULT: SiriusPluginConfig = {
     actionbarTemplate: '§eCPS: §f%cps% §2TPS: §f%tps% §bStatus: §f%status%',
     actionbarRefreshInterval: 2
   },
+  gui: {
+    enabled: true,
+    menuCmdEnabled: true,
+    menuCmdAlias: 'cd'
+  },
   helper: {
     enabled: true,
     //! nbtCommandEnabled: true
-    //* noticeCmdEnabled: true,
+    noticeCmdEnabled: true,
     suicideCmdEnabled: true,
     backCmdEnabled: true,
     clockCmdEnabled: true,
-    //* msguiCmdEnabled: true,
+    msguiCmdEnabled: true,
     hereCmdEnabled: true,
     loreCmdEnabled: true
     //! mapCmdEnabled: true
@@ -66,11 +71,6 @@ export const PLUGIN_CONFIG_DEFAULT: SiriusPluginConfig = {
     warpCmdEnabled: true
     //! transferCmdEnabled: true
   },
-  /*   gui: {
-    enabled: true
-    //! menuCmdEnabled: true,
-    //! menuCmdAlias: 'cd'
-  }, */
   manager: {
     enabled: true,
     //* mangerCmdEnabled: true,
