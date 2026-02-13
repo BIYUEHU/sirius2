@@ -23,7 +23,7 @@ This is still a work in progress.
 
 ## License
 
-Under the [BCU](https://github.com/ICEAGENB/GPL-3.0-or-later) license.
+Under the `GPL-3.0-or-later` license.
 
 ## TODO
 
