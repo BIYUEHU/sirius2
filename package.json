@@ -2,7 +2,7 @@
   "name": "siriusu",
   "description": "sirius addon base on script api",
   "version": "2.0.0",
-  "license": "BAN-ZHINESE-USING",
+  "license": "GPL-3.0-or-later",
   "author": "Arimura Sena <biyuehuya@gmail.com>",
   "scripts": {
     "build": "pnpm generate:types && tsup",
